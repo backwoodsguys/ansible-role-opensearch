@@ -1,0 +1,27 @@
+---
+# Specify which version of OpenSearch you want to install.
+os_version: 1.2.2
+
+# Specify which will be the OpenSearch User
+os_user: opensearch
+
+# Specify which will be the OpenSearch Group
+os_group: opensearch
+
+# Specify which will be the OpenSearch Install PATH
+os_install_path: /usr/share
+
+# Specify which will be the OpenSearch PATH
+os_path: "{{ os_install_path }}/opensearch"
+
+# Specify which will be the OpenSearch Config PATH
+os_config_path: /etc/opensearch
+
+# Specify which will be the OpenSearch Log PATH
+os_log_path: /var/log/opensearch
+
+# Specify which will be the OpenSearch Data PATH
+os_data_path: /var/lib/opensearch
+
+# Specify which will be the OpenSearch PID PATH
+os_pid_path: /var/run/opensearch
