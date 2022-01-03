@@ -1,0 +1,6 @@
+---
+
+- name: Include OpenSearch Installation Tasks
+  include_tasks: defaults/install.yml
+  tags:
+    - install

@@ -1,0 +1,129 @@
+---
+
+- name: "[OpenSearch] Create {{ os_group }} group"
+  group:
+    name: "{{ os_group }}"
+    state: present
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Create the {{ os_user }} user"
+  user:
+    name: "{{ os_user }}"
+    groups: "{{ os_group }}"
+    shell: /bin/bash
+    create_home: false
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Check if versions already exists"
+  stat: 
+    path: "{{ os_path }}-{{ os_version }}"
+  register: installed_path
+  become: true
+  tags:
+    - install
+    - upgrade
+
+- name: "[OpenSearch] Download Tarball"
+  get_url:
+    url: "https://artifacts.opensearch.org/releases/bundle/opensearch/{{ os_version }}/opensearch-{{ os_version }}-linux-x64.tar.gz"
+    dest: "/tmp/opensearch-{{ os_version }}-linux-x64.tar.gz"
+    mode: '0644'
+  register: download_tarball
+  until: download_tarball is succeeded
+  retries: 12
+  delay: 5
+  when: not installed_path.stat.exists 
+  tags:
+    - install
+    - upgrade
+
+- name: "[OpenSearch] Unpack tarball"
+  unarchive:
+    src: "/tmp/opensearch-{{ os_version }}-linux-x64.tar.gz"
+    dest: "{{ os_install_path }}"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    remote_src: yes
+  become: true
+  when: not installed_path.stat.exists
+  tags:
+    - install
+    - upgrade
+
+- name: "[OpenSearch] Remove tarfile"
+  ansible.builtin.file:
+    path: "/tmp/opensearch-{{ os_version }}-linux-x64.tar.gz"
+    state: absent
+  tags:
+    - install
+    - upgrade
+
+- name: "[OpenSearch] Create path link"
+  ansible.builtin.file:
+    src: "{{ os_path }}-{{ os_version }}"
+    dest: "{{ os_path }}"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    state: link
+  become: true
+  tags:
+    - install
+    - upgrade
+
+- name: "[OpenSearch] Create profile.d"
+  copy:
+    dest: /etc/profile.d/opensearch.sh
+    content: |
+      export OPENSEARCH_HOME={{ os_path }}
+      export OPENSEARCH_PATH_CONF={{ os_config_path }}
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Create log PATH"
+  ansible.builtin.file:
+    path: "{{ os_log_path }}"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    state: directory
+    mode: '0640'
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Create data PATH"
+  ansible.builtin.file:
+    path: "{{ os_data_path }}"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    state: directory
+    mode: '02750'
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Create tmp PATH"
+  ansible.builtin.file:
+    path: "{{ os_path }}/tmp"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    state: directory
+    mode: '0740'
+  become: true
+  tags:
+    - install
+
+- name: "[OpenSearch] Create pid PATH"
+  ansible.builtin.file:
+    path: "{{ os_pid_path }}"
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    state: directory
+    mode: '0740'
+  become: true
+  tags:
+    - install

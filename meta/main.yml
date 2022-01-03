@@ -1,0 +1,32 @@
+galaxy_info:
+  author: Yuri Corona Lopes
+  description: This role installs and configures OpenSearch on your target hosts.
+  role_name: opensearch
+  namespace: backwoodsguys
+  company: Backwoods Guys
+
+  license: Apache License, Version 2.0
+
+  min_ansible_version: 2.9
+
+  platforms:
+  - name: Rocky
+    versions:
+      - all
+  - name: Ubuntu
+    versions:
+      - focal
+      - bionic
+  - name: Debian
+    versions:
+      - buster
+      - bullseye
+
+  galaxy_tags:
+    - opensearch
+    - opensource
+    - install
+    - server
+    - oss
+    - elastic
+    - elasticsearch
