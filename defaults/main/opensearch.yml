@@ -1,6 +1,6 @@
 ---
 # Specify which version of OpenSearch you want to install.
-os_version: 1.2.2
+os_version: 1.2.3
 
 # Specify which will be the OpenSearch User
 os_user: opensearch
